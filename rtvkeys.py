@@ -62,8 +62,6 @@ class rtvkeys:
             self.db.delete_last_block()
             last_block_db -= 1
 
-        last_block_db = 100000
-        total_blocks = 100020
         while last_block_db < total_blocks:
             bhash = self.proxy.getblockhash(last_block_db + 1)
             block = self.proxy.getblock(bhash)

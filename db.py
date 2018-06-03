@@ -111,10 +111,8 @@ class db:
         """
         c = self.conn.cursor()
         nkeys = []
-
         keys = dict((x[2], x) for x in keys).values() # delete duplicates in list
         for key in keys:
-            print(key[2])
             # keys_table.HASH-1 because there is no ID in the tables
             r = c.execute('''SELECT count(*) FROM keys WHERE hash = ?''', (key[keys_table.HASH-1],))
             if (r.fetchone()[0]):

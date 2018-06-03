@@ -62,6 +62,8 @@ class rtvkeys:
             self.db.delete_last_block()
             last_block_db -= 1
 
+        last_block_db = 165446
+        total_blocks = 165448
         while last_block_db < total_blocks:
             bhash = self.proxy.getblockhash(last_block_db + 1)
             block = self.proxy.getblock(bhash)
@@ -125,12 +127,16 @@ class rtvkeys:
             for key in keys:
                 sign = key[:2]
                 if sign != "04":
+                    #Because sometimes very strange keys, and also because
+                    #there are "0"
+                    if (len(key) < 60 or len(key) > 70): continue
                     sx = '0x' + key[2:].upper()
                     x = int(sx, 16)
                     y = self.get_y(x, sign)
                     sy = "%X" % y
                     #keys.append([tx, nblock, hash, ])
                 else:
+                    if (len(key) < 120 or len(key) > 136): continue
                     sx = key[2:66].upper()
                     x = int(sx, 16)
                     sy = key[66:].upper()

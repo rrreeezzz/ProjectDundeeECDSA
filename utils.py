@@ -33,20 +33,37 @@ class show_speed:
     """
         Show how many blocks we compute per 10 minutes.
     """
-    def __init__(self):
+    def __init__(self, nblock, cur):
         now = time.time()
         self.start = now
         self.counter = 0
         self.time_since_last_block = now
+        self.nblock = nblock
+        self.cur = cur
 
     def __str__(self):
         return self.__repr__()
 
     def __repr__(self):
+        r = ""
         now = time.time()
+        self.cur += 1
+
+        #average sec per blocks
         time_elapsed_since_start = now - self.start
         self.counter += 1
+        average_sec_block = time_elapsed_since_start/self.counter
+
+        #time las block
         time_elapsed_since_last_block = now - self.time_since_last_block
         self.time_since_last_block = now
-        return "{0:.2f}s/block\t|\t{1:.2f}s/blocks".format(time_elapsed_since_last_block
-                                                ,time_elapsed_since_start/self.counter)
+
+        #estimated remaining time
+        #1 block every ~ 10 minutes
+        estimated_remaining_time = (((self.nblock - self.cur) * 10)/
+                                    (60/average_sec_block))/60
+
+        r += " {0:.2f}s/block\t|".format(time_elapsed_since_last_block)
+        r += " {0:.2f}s/blocks\t|".format(average_sec_block)
+        r += " ~ time left: {0:d}h".format(int(estimated_remaining_time))
+        return r

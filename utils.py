@@ -1,3 +1,5 @@
+import time
+
 class bcolors:
     HEADER      = '\033[95m'
     OKBLUE      = '\033[94m'
@@ -26,3 +28,25 @@ def success(s):
 
 def log(s):
     print(bcolors.OKBLUE + "[+] Info: " + bcolors.ENDC + " " + s)
+
+class show_speed:
+    """
+        Show how many blocks we compute per 10 minutes.
+    """
+    def __init__(self):
+        now = time.time()
+        self.start = now
+        self.counter = 0
+        self.time_since_last_block = now
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        now = time.time()
+        time_elapsed_since_start = now - self.start
+        self.counter += 1
+        time_elapsed_since_last_block = now - self.time_since_last_block
+        self.time_since_last_block = now
+        return "{0:.2f}s/block\t|\t{1:.2f}s/blocks".format(time_elapsed_since_last_block
+                                                ,time_elapsed_since_start/self.counter)

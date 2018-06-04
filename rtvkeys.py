@@ -62,10 +62,11 @@ class rtvkeys:
             self.db.delete_last_block()
             last_block_db -= 1
 
+        speed = show_speed()
         while last_block_db < total_blocks:
             bhash = self.proxy.getblockhash(last_block_db + 1)
             block = self.proxy.getblock(bhash)
-            log("retrieving block {}...".format(last_block_db+1))
+            log("retrieving block {}...\t{}".format(last_block_db+1, speed))
 
             keys = []
             for txid in block['tx']:

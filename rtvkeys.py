@@ -21,7 +21,7 @@ class rtvkeys:
         self.rpc_port = rpc_port
         self.proxy = None
         self.nthreads = nthreads
-        self.queue = Queue(maxsize=10000)
+        self.queue = Queue(maxsize=100000)
         self.stopped = False
 
     def init_rpc_co(self):

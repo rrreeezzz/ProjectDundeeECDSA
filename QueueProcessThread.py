@@ -19,7 +19,7 @@ class QueueProcessThread(threading.Thread):
         self.db = Db()
         self.db.connect()
         while(1):
-            sleep(10)
+            #sleep(10)
             if self.stopped():
                 self.empty_queue()
                 self.db.disconnect()

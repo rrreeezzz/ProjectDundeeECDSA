@@ -97,7 +97,7 @@ class BlockThread(threading.Thread):
             rds = [x for x in tab if x.startswith('5')]
             if (len(rds) != 0):
                 for x in rds:
-                    keys += [p for p in proxy.decodescript(x)['asm'].split(' ') if
+                    keys += [p for p in self.proxy.decodescript(x)['asm'].split(' ') if
                             p.startswith('02') or p.startswith('03') or
                             p.startswith('04')]
             else:

@@ -1,11 +1,10 @@
 import sqlite3
 from utils import *
 
-class db:
+class Db:
     def __init__(self, file="data.db"):
-        self.conn = self._connect(file)
-        if(self._check_table() == False):
-            self._create_table()
+        self.filedb = file
+        self.conn = None
 
     def _check_table(self):
         """
@@ -18,11 +17,27 @@ class db:
         else:
             return False
 
-    def _connect(self, file):
+    def connect(self):
+        """
+            Connect to DB and check if tables exist.
+        """
         try:
-            return sqlite3.connect(file)
+            self.conn = sqlite3.connect(self.filedb)
         except Exception as e:
             perror("sqlite connection: " + str(e))
+
+        if(self._check_table() == False):
+            self._create_table()
+
+    def disconnect(self):
+        """
+            Connect to DB and check if tables exist.
+        """
+        self._commit()
+        try:
+            self.conn.close()
+        except Exception as e:
+            perror("sqlite disconnection: " + str(e))
 
     def _commit(self):
         try:
@@ -56,12 +71,6 @@ class db:
 
         self._commit()
 
-    def close_connection(self):
-        try:
-            self.conn.close()
-        except Exception as e:
-            perror("sqlite close connection: " + str(e))
-
     def add_keys(self, keys):
         """
             Add a key to the KEYS table, if the keys does not already exist.
@@ -77,9 +86,9 @@ class db:
             Return the block of the last added key.
         """
         c = self.conn.cursor()
-        block = c.execute('''SELECT nblock FROM keys ORDER BY id DESC LIMIT 1''')
+        block = c.execute('''SELECT MAX(nblock) FROM keys''')
         nb = block.fetchone()
-        if (nb):
+        if (nb[0]):
             return int(nb[0])
         else:
             return None
@@ -100,7 +109,8 @@ class db:
             Return txid of last key.
         """
         c = self.conn.cursor()
-        txid = c.execute('''SELECT txid FROM keys ORDER BY id DESC LIMIT 1''')
+        block = self.get_last_block();
+        txid = c.execute('''SELECT txid FROM keys WHERE nblock = ? ORDER BY id DESC LIMIT 1''', (block,))
         return txid.fetchone()
 
     def _verify_double(self, keys):
@@ -113,7 +123,7 @@ class db:
         nkeys = []
         keys = dict((x[2], x) for x in keys).values() # delete duplicates in list
         for key in keys:
-            # keys_table.HASH-1 because there is no ID in the tables
+            # keys_table.HASH-1 because there is no ID in the element
             r = c.execute('''SELECT count(*) FROM keys WHERE hash = ?''', (key[keys_table.HASH-1],))
             if (r.fetchone()[0]):
                 c.execute('''UPDATE keys SET count=count+1 WHERE hash = ?''', (key[keys_table.HASH-1],))

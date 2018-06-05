@@ -1,4 +1,6 @@
 import time
+import sqlite3
+import logging
 
 class bcolors:
     HEADER      = '\033[95m'
@@ -10,6 +12,7 @@ class bcolors:
     BOLD        = '\033[1m'
     UNDERLINE   = '\033[4m'
 
+########## DB Specs
 class keys_table:
     ID      = 0
     BLOCK  = 1
@@ -19,6 +22,8 @@ class keys_table:
     X       = 5
     Y       = 6
 
+########## Log function
+# TODO: replace by logging module
 def perror(e):
     print(bcolors.FAIL + "[-]" + bcolors.ENDC + " " + e)
     exit(1)
@@ -26,8 +31,13 @@ def perror(e):
 def success(s):
     print(bcolors.OKGREEN + "[+]" + bcolors.ENDC + " " + s)
 
-def log(s):
-    print(bcolors.OKBLUE + "[+] Info: " + bcolors.ENDC + " " + s)
+
+
+
+logging.basicConfig(level=logging.INFO,
+                    format=bcolors.OKBLUE + "[+] Info: "
+                    + bcolors.ENDC + " "'%(message)s',
+                    )
 
 class show_speed:
     """

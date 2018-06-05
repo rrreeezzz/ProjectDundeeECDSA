@@ -18,7 +18,6 @@ class BlockThread(threading.Thread):
         self.proxy = None
         self.nblock = 0
         self._stop_event = threading.Event()
-        self.init_rpc_co()
 
     def init_rpc_co(self):
         try:
@@ -51,6 +50,7 @@ class BlockThread(threading.Thread):
 
     def run(self):
         while(1):
+            self.init_rpc_co()
             if self.stopped() and self.nblock == 0:
                 logging.info('%s Stopped', self.name)
                 break
@@ -68,6 +68,8 @@ class BlockThread(threading.Thread):
                 for elt in keys:
                     self.queue.put(elt)
                 self.nblock = 0
+                self.proxy.close()
+                self.proxy = None
         return
 
     def _get_keys(self, txid, block):

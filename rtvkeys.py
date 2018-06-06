@@ -21,7 +21,7 @@ class rtvkeys:
         self.rpc_port = rpc_port
         self.proxy = None
         self.nthreads = nthreads
-        self.queue = Queue(maxsize=100000)
+        self.queue = Queue(maxsize=50000)
         self.stopped = False
 
     def init_rpc_co(self):
@@ -100,7 +100,7 @@ class rtvkeys:
             for t in threads:
                 if t.is_working() == False:
                     t.set_block(last_block_db+1)
-                    logging.info("retrieving block {}...{}".format(last_block_db+1, speed))
+                    logging.info("{} retrieving block {}...{}".format(t.name, last_block_db+1, speed))
                     last_block_db += 1
 
         return

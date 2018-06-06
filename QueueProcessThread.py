@@ -8,7 +8,8 @@ class QueueProcessThread(threading.Thread):
 
     def __init__(self, args=()):
         super(QueueProcessThread, self).__init__()
-        self.queue = args
+        self.queue = args[0]
+        self.queue_max_size = args[1]
         self.db = None
         self._stop_event = threading.Event()
 
@@ -23,8 +24,8 @@ class QueueProcessThread(threading.Thread):
                 self.empty_queue()
                 self.db.disconnect()
                 break
-            if self.queue.full() == True:
-                logging.info("Queue full! Working...")
+            if self.queue.full() > self.queue_max_size/2:
+                logging.info("Emptying queue...")
                 self.empty_queue()
 
         return

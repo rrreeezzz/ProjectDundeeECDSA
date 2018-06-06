@@ -13,7 +13,7 @@ from Db import Db
 from utils import *
 
 class rtvkeys:
-    def __init__(self, rpc_addr, rpc_port, nthreads):
+    def __init__(self, rpc_addr, rpc_port, nthreads, queue_max_size = 10000):
         """
             p is the order (?) of the EC Bitcoin Blockchain.
         """
@@ -21,7 +21,8 @@ class rtvkeys:
         self.rpc_port = rpc_port
         self.proxy = None
         self.nthreads = nthreads
-        self.queue = Queue(maxsize=50000)
+        self.queue_max_size = queue_max_size
+        self.queue = Queue(queue_max_size)
         self.stopped = False
 
     def init_rpc_co(self):
@@ -65,14 +66,14 @@ class rtvkeys:
             last_block_db -= 1
 
         #For test purpose
-        # last_block_db = 210000
-        # total_blocks = 210500
+        last_block_db = 210000
+        total_blocks = 210500
 
         #Don't need db connection anymore
         db.disconnect()
 
         #Create thread to process queue data
-        bdthread = QueueProcessThread(args=(self.queue))
+        bdthread = QueueProcessThread(args=(self.queue, self.queue_max_size))
         bdthread.start()
         bdthread.name = "bdthread"
 
@@ -100,7 +101,7 @@ class rtvkeys:
             for t in threads:
                 if t.is_working() == False:
                     t.set_block(last_block_db+1)
-                    logging.info("{} retrieving block {}...{}".format(t.name, last_block_db+1, speed))
+                    logging.info("{}\tretrieving block {}...{}".format(t.name, last_block_db+1, speed))
                     last_block_db += 1
 
         return
@@ -131,15 +132,16 @@ def get_args():
     parser.add_argument('-r', '--rpc_addr', metavar='rpc_addr', type=str, nargs='?', help='RPC address')
     parser.add_argument('-p', '--rpc_port', metavar='rpc_port', type=int, nargs='?', default="8332", help='RPC port')
     parser.add_argument('-t', '--threads', metavar='threads', type=int, nargs='?', default="10", help='Number of threads')
+    parser.add_argument('-q', '--queue-size', metavar='queue_max_size', type=int, nargs='?', default="10000", help='Maximum queue size')
     return parser.parse_args()
 
 if __name__ == "__main__":
     args = get_args()
 
     if (args.rpc_addr):
-        test = rtvkeys(args.rpc_addr, args.rpc_port, args.threads)
+        test = rtvkeys(args.rpc_addr, args.rpc_port, args.threads, args.queue_max_size)
     else:
-        test = rtvkeys(None, args.rpc_port, args.threads)
+        test = rtvkeys(None, args.rpc_port, args.threads, args.queue_size)
 
     # if Ctrl-C
     signal.signal(signal.SIGINT, test.stop)

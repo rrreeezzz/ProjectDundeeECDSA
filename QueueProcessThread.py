@@ -24,8 +24,8 @@ class QueueProcessThread(threading.Thread):
                 self.empty_queue()
                 self.db.disconnect()
                 break
-            #if self.queue.qsize() > self.queue_max_size/2:
-                # logging.info("Emptying queue...")
+            # if self.queue.qsize() > self.queue_max_size/2:
+            #     logging.info("Emptying queue...")
             self.empty_queue()
 
         return

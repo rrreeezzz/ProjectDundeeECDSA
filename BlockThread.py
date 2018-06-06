@@ -94,15 +94,13 @@ class BlockThread(threading.Thread):
                 tab = [x for x in sc['asm'].split(' ')]
 
             #If there is a redeem script
-            rds = [x for x in tab if x.startswith('5')]
-            if (len(rds) != 0):
+            rds = [x for x in tab if x[0] == '5']
+            if (len(rds) > 0):
                 for x in rds:
                     keys += [p for p in self.proxy.decodescript(x)['asm'].split(' ') if
-                            p.startswith('02') or p.startswith('03') or
-                            p.startswith('04')]
+                            p[0:2] in ['02', '03', '04']]
             else:
-                keys += [p for p in tab if p.startswith('02') or p.startswith('03')
-                        or p.startswith('04')]
+                keys += [p for p in tab if p[0:2] in ['02', '03', '04']]
 
             for key in keys:
                 sign = key[:2]

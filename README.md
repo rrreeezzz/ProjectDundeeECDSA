@@ -18,7 +18,8 @@ The DB schema for now is:
 
 # Releases
 - 0.1 [04/06/2018]: Works, but really bad performance
+- 0.2 [06/06/2018]: Using multithreading and queue, but still, too long 
 
 # TODO
-- Rewriting most of the code to make it more modular
-- Threading => Should improve performance a lot
+- Rewrite the core functions
+

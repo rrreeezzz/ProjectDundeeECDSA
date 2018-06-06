@@ -13,7 +13,7 @@ from Db import Db
 from utils import *
 
 class rtvkeys:
-    def __init__(self, rpc_addr, rpc_port, nthreads, queue_max_size = 10000):
+    def __init__(self, rpc_addr, rpc_port, nthreads, queue_max_size = 1000):
         """
             p is the order (?) of the EC Bitcoin Blockchain.
         """

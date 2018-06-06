@@ -66,8 +66,8 @@ class rtvkeys:
             last_block_db -= 1
 
         #For test purpose
-        last_block_db = 210000
-        total_blocks = 210500
+        # last_block_db = 210000
+        # total_blocks = 210500
 
         #Don't need db connection anymore
         db.disconnect()

@@ -26,8 +26,7 @@ class QueueProcessThread(threading.Thread):
                 break
             # if self.queue.qsize() > self.queue_max_size/2:
             #     logging.info("Emptying queue...")
-            if self.queue.full():
-                self.empty_queue()
+            self.empty_queue()
 
         return
 

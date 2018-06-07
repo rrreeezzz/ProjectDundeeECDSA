@@ -65,6 +65,8 @@ class BlockThread(threading.Thread):
                         continue
                     keys += data
                 keys = dict((x[2], x) for x in keys).values() # delete duplicates in list
+                #Wait for the queue to be empty
+                self.queue.join()
                 for elt in keys:
                     self.queue.put(elt)
                 self.nblock = 0

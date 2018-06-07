@@ -50,11 +50,11 @@ class BlockThread(threading.Thread):
 
     def run(self):
         while(1):
-            self.init_rpc_co()
             if self.stopped() and self.nblock == 0:
                 logging.info('%s Stopped', self.name)
                 break
             if self.nblock:
+                self.init_rpc_co()
                 #logging.info('%s running with %s', self.name, self.nblock)
                 keys = []
                 bhash = self.proxy.getblockhash(self.nblock)
@@ -65,9 +65,9 @@ class BlockThread(threading.Thread):
                         continue
                     keys += data
                 keys = dict((x[2], x) for x in keys).values() # delete duplicates in list
-                if self.queue.full():
-                    self.queue.join()
                 for elt in keys:
+                    if self.queue.full():
+                        self.queue.join()
                     self.queue.put(elt)
                 self.nblock = 0
                 self.proxy.close()

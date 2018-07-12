@@ -20,13 +20,10 @@ class QueueProcessThread(threading.Thread):
 		self.db = Db()
 		self.db.connect()
 		while(1):
-			sleep(0.5)
 			if self.stopped():
 				self.empty_queue()
 				self.db.disconnect()
 				break
-			# if self.queue.qsize() > self.queue_max_size/2:
-			#     logging.info("Emptying queue...")
 			self.empty_queue()
 
 		return

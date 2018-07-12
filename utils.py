@@ -4,6 +4,7 @@ import logging
 
 from blockchain_parser.script import *
 from bitcoin.wallet import P2PKHBitcoinAddress
+from bitcoin.wallet import CBitcoinAddressError
 
 class bcolors:
 	HEADER      = '\033[95m'
@@ -51,7 +52,7 @@ def script_pubkey_parser(script):
 	if script.value == 'INVALID_SCRIPT':
 		return []
 	for elt in script.operations:
-		if type(elt) != bytes:
+		if type(elt) != bytes and len(elt) == 0:
 			continue
 		if is_public_key(elt):
 			keys.append(elt)
@@ -86,7 +87,12 @@ def tx_to_keys(tx, block):
 		sx = x.hex().upper()
 		sy = y.hex().upper()
 
-		hash = P2PKHBitcoinAddress.from_pubkey(key, 0)
+		try:
+			hash = P2PKHBitcoinAddress.from_pubkey(key, 0)
+		except CBitcoinAddressError as e:
+			if str(e) == 'invalid pubkey':
+				continue
+
 		r.append([block, tx.txid, str(hash), sx, sy])
 
 	return r

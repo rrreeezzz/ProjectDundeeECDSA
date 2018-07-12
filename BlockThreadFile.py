@@ -92,6 +92,8 @@ class BlockThreadFile(threading.Thread):
 
 	def run(self):
 		while(1):
+			if self.queue.qsize() > self.qeue.maxsize/2:
+				self.queue.join()
 			if self.stopped() and self.block == None:
 				logging.info('%s Stopped', self.name)
 				break
@@ -104,8 +106,6 @@ class BlockThreadFile(threading.Thread):
 					keys += data
 				keys = dict((x[2], x) for x in keys).values() # delete duplicates in list
 				for elt in keys:
-					if self.queue.full():
-						self.queue.join()
 					self.queue.put(elt)
 				self.block = None
 
